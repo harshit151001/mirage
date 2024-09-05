@@ -1,0 +1,41 @@
+{
+  "name": "mirage",
+  "version": "1.0.0",
+  "description": "This project is an AI-powered chat assistant integrated with GitHub repositories, designed to help developers interact with their code more efficiently. Users can query the AI about their code, documentation, or issues, and the assistant provides real-time, contextually relevant responses based on the contents of their repositories.",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "build": "echo 'No build step required'",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@octokit/rest": "^21.0.2",
+    "@prisma/client": "^5.19.0",
+    "axios": "^0.27.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "octokit": "^4.0.2",
+    "openai": "^4.57.0",
+    "passport": "^0.6.0",
+    "passport-github2": "^0.1.12",
+    "tree-sitter": "^0.21.1",
+    "tree-sitter-javascript": "^0.21.4",
+    "unzipper": "^0.12.3"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/express-session": "^1.17.7",
+    "@types/jest": "^29.5.3",
+    "@types/node": "^22.5.1",
+    "@types/passport": "^1.0.12",
+    "@types/passport-github2": "^1.2.5",
+    "jest": "^29.6.2",
+    "nodemon": "^2.0.19",
+    "prisma": "^5.19.0"
+  }
+}
