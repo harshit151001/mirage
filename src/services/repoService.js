@@ -192,8 +192,6 @@ async function getProcessedRepo(userId, repoId) {
 			},
 		});
 
-		console.log("Processed repository:", processedRepo);
-
 		return {
 			status: 200,
 			data: processedRepo,

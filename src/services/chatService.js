@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { createThread, createMessage, createStream, createAssistant } from "../utils/llmUtils/openAi.js";
+import { console } from "inspector";
 
 const prisma = new PrismaClient();
 
@@ -38,30 +39,35 @@ async function query(userId, chatId, repoId, message) {
  * 
  * @param {string} userId - The ID of the user.
  * @returns {Promise<Array>} - The list of chats with their history.
+ * @throws {Error} - If there's an error fetching the chat history.
  */
 async function getChatsHistory(userId) {
-    return await prisma.chat.findMany({
-        where: { userId },
-        select: {
-            id: true,
-            repoId: {
-                select: {
-                    id: true,
-                    name: true,
-                    owner: true,
+    try {
+        const history = await prisma.chat.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                repoId: true,
+                messages: true,
+                repo: {
+                    select: {
+                        id: true,
+                        name: true,
+                        owner: true,
+                    }
                 },
-            },
-            messages: {
-                select: {
-                    id: true,
-                    content: true,
-                    senderType: true,
-                    parentId: true,
-                    createdAt: true,
-                },
-            },
-        }
-    });
+                createdAt: true,
+            }
+        });
+
+        console.log("history", history);
+
+        return history;
+
+    } catch (error) {
+        console.error(`Error fetching chat history for user ${userId}:`, error);
+        throw new Error('Failed to fetch chat history');
+    }
 }
 
 /**
@@ -70,30 +76,35 @@ async function getChatsHistory(userId) {
  * @param {string} userId - The ID of the user.
  * @param {string} chatId - The ID of the chat.
  * @returns {Promise<Object>} - The chat history.
+ * @throws {Error} - If there's an error fetching the chat history or if the chat is not found.
  */
 async function getChatHistory(userId, chatId) {
-    const chat = await prisma.chat.findUnique({
-        where: { id: chatId },
-        include: {
-            repo: true,
-            userId: true,
-            messages: {
-                select: {
-                    id: true,
-                    content: true,
-                    senderType: true,
-                    parentId: true,
-                    createdAt: true,
+    try {
+        const chat = await prisma.chat.findUnique({
+            where: { id: chatId },
+            include: {
+                repo: true,
+                messages: {
+                    select: {
+                        id: true,
+                        content: true,
+                        senderType: true,
+                        parentId: true,
+                        createdAt: true,
+                    },
                 },
             },
-        },
-    });
+        });
 
-    if (!chat || chat.userId !== userId) {
-        throw new Error('Not found');
+        if (!chat || chat.userId !== userId) {
+            throw new Error('Not found');
+        }
+
+        return chat;
+    } catch (error) {
+        console.error(`Error fetching chat history for chat ${chatId}:`, error);
+        throw error;
     }
-
-    return chat;
 }
 
 /**

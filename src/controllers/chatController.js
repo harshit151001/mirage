@@ -6,7 +6,7 @@ async function handleQuery(req, res) {
     let headersSent = false;
     try {
         const { chatId, repoId, message, parentId } = req.body;
-        const userId = '60372839-8ead-4ac8-ac8d-bcbf7fa87fb9';
+        const userId = req.user.id;
 
         if (!chatId || !repoId || !message) throw new Error('Missing required fields');
 
@@ -29,7 +29,11 @@ async function handleQuery(req, res) {
                 if (event?.content) {
                     const text = JSON.stringify(event.content[0].text);
                     const userMessage = await chatService.createUserMessage(result.chatId, message, parentId)
-                    chatService.createAssistantMessage(result.chatId, text, userMessage.id);
+                    const assistantMessage = await chatService.createAssistantMessage(result.chatId, text, userMessage.id);
+                    res.write(`data: ${JSON.stringify({
+                        status: 'updated_history',
+                        id: assistantMessage.id
+                    })}\n\n`);
                 }
             }
         }

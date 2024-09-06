@@ -4,7 +4,7 @@ import * as chatController from "../controllers/chatController.js";
 
 const router = express.Router();
 
-router.post("/query", chatController.handleQuery);
+router.post("/query", ensureAuthenticated, chatController.handleQuery);
 
 router.get("/history", ensureAuthenticated, chatController.getChatsHistory);
 
