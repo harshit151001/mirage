@@ -146,3 +146,23 @@
 
 ---
 
+### 7. **Get Processed Repository API**
+   - **Endpoint:** `/processed-repos/:repoId`
+   - **Method:** `GET`
+   - **Params:** None
+   - **Returns:**
+     - **200 OK:**
+       - Repository for that repoId belonging to user.
+       ```json
+         {
+           "id": "repoId",
+           "name": "repoName",
+           "owner": "repoOwner",
+           "createdAt": "creationDate",
+           "updatedAt": "lastUpdatedDate"
+         }
+       ```
+     - **500 Internal Server Error:** If fetching the processed repositories fails.
+
+---
+

@@ -18,4 +18,10 @@ router.get(
   repoController.getProcessedRepos
 );
 
+router.get(
+  "/processed-repos/:repoId",
+  ensureAuthenticated,
+  repoController.getProcessedRepo
+);
+
 export default router;

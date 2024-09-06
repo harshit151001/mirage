@@ -38,13 +38,7 @@ async function getUserRepos(accessToken) {
 
 		return {
 			status: 200,
-			data: allRepos.map((repo) => ({
-				id: repo.id,
-				name: repo.name,
-				owner: repo.owner,
-				createdAt: repo.created_at,
-				updatedAt: repo.updated_at,
-			})),
+			data: allRepos
 		};
 	} catch (error) {
 		console.error(`Error fetching repositories: ${error.message}`);
@@ -113,7 +107,7 @@ async function processRepo(userId, owner, repo, branch = "main", accessToken) {
 				userId: userId,
 				filesPath: repositoryFolder,
 				storeId: vectorStoreId,
-				// assistantId: assistantId,
+				processed: true,
 			},
 		});
 
@@ -145,23 +139,75 @@ async function processRepo(userId, owner, repo, branch = "main", accessToken) {
  * @returns {Promise<Object>} - An object containing the status and the list of processed repositories.
  */
 async function getProcessedRepos(userId) {
-	const processedRepos = await prisma.repo.findMany({
-		where: {
-			userId,
-			processed: true,
-		},
-		select: {
-			id: true,
-			name: true,
-			owner: true,
-			createdAt: true,
-			updatedAt: true,
-		},
-	});
-	return {
-		status: 200,
-		data: processedRepos,
-	};
+	try {
+		const processedRepos = await prisma.repo.findMany({
+			where: {
+				userId,
+				processed: true,
+			},
+			select: {
+				id: true,
+				name: true,
+				owner: true,
+				createdAt: true,
+				updatedAt: true,
+			},
+		});
+
+		console.log("Processed repositories:", processedRepos);
+		return {
+			status: 200,
+			data: processedRepos,
+		};
+	} catch (error) {
+		console.error(
+			`Error fetching processed repositories for user ${userId}:`,
+			error.message
+		);
+		throw error;
+	}
 }
 
-export { getUserRepos, processRepo, getProcessedRepos };
+/**
+ * Retrieves a processed repository by ID.
+ * 
+ * @param {string} userId - The ID of the user.
+ * @param {string} repoId - The ID of the repository.
+ * @returns {Promise<Object>} - An object containing the status and the repository data.
+ */
+async function getProcessedRepo(userId, repoId) {
+	try {
+		const processedRepo = await prisma.repo.findUnique({
+			where: {
+				id: repoId,
+				userId,
+				processed: true,
+			},
+			select: {
+				id: true,
+				name: true,
+				owner: true,
+				createdAt: true,
+				updatedAt: true,
+			},
+		});
+
+		console.log("Processed repository:", processedRepo);
+
+		return {
+			status: 200,
+			data: processedRepo,
+		};
+	} catch (error) {
+		console.error(
+			`Error fetching processed repository ${repoId}:`,
+			error.message
+		);
+		throw error;
+	}
+}
+
+
+
+
+export { getUserRepos, processRepo, getProcessedRepos, getProcessedRepo };

@@ -23,7 +23,7 @@ router.get("/logout", (req, res, next) => {
 		if (err) {
 			return next(err);
 		}
-		res.status(200).redirect("/");
+		res.status(200).redirect("http://localhost:5173");
 	});
 });
 
