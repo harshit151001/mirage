@@ -82,8 +82,20 @@ async function getChatHistory(userId, chatId) {
     try {
         const chat = await prisma.chat.findUnique({
             where: { id: chatId },
-            include: {
-                repo: true,
+            select: {
+                id: true,
+                title: true,
+                userId: true,
+                repoId: true,
+                createdAt: true,
+                updatedAt: true,
+                repo: {
+                    select: {
+                        id: true,
+                        name: true,
+                        owner: true,
+                    }
+                },
                 messages: {
                     select: {
                         id: true,
